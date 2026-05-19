@@ -1,14 +1,14 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional
-from app.modals.Modals import ColumnNames, Priority
+from app.modals.Modals import ColumnNames, Priority, ProjectColumns, TaskAttachments
 
 
 class TaskResponse(BaseModel):
     """Response model for a single task"""
     id: int
     project_id: int
-    column_name: str
+    column_id: int
     title: str
     description: str
     priority: str
@@ -53,7 +53,7 @@ class GetTasksResponse(BaseModel):
 class CreateTaskRequest(BaseModel):
     """Request model for creating a new task"""
     project_id: int
-    column_name: ColumnNames
+    column_id: int
     title: str
     description: str
     priority: Priority
@@ -70,7 +70,7 @@ class UpdateTaskRequest(BaseModel):
 
 class MoveTaskRequest(BaseModel):
     """Request model for moving a task to a different column"""
-    column_name: ColumnNames
+    column_id: int
 
 
 class AssignTaskRequest(BaseModel):
@@ -101,3 +101,25 @@ class GetCommentsResponse(BaseModel):
 class AddCommentRequest(BaseModel):
     """Request model for adding a comment"""
     comment: str
+
+
+class TaskAttachmentResponse(BaseModel):
+    """Response model for a task attachment"""
+    id: int
+    task_id: int
+    file_name: str
+    file_path: str
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+class TaskWithAttachmentsResponse(BaseModel):
+    """Response model for a task with its attachments"""
+    task: TaskResponse
+    attachments: List[TaskAttachmentResponse]
+    
+    class Config:
+        from_attributes = True

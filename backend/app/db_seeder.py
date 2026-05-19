@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 import hashlib
 import secrets
 from sqlalchemy.ext.asyncio import AsyncSession
-from .modals.Modals import Base, User, UserRole, Task, ColumnNames, Priority, Projects, TaskAssignees, Comments, ProjectMembers
+from .modals.Modals import Base, User, UserRole, Task, ColumnNames, Priority, Projects, TaskAssignees, Comments, ProjectMembers, ProjectColumns
 from .config.db import AsyncSessionLocal
 
 
@@ -55,11 +55,23 @@ async def seed_db(db: AsyncSession):
     db.add_all(projects)
     await db.flush()
     await db.commit()
+    
+    # Add project columns for each project
+    project_columns = [
+        # Columns for Project 1
+        ProjectColumns(project_id=1, column_name="To Do", order=1),
+        ProjectColumns(project_id=1, column_name="In Progress", order=2),
+        ProjectColumns(project_id=1, column_name="Review", order=3),
+        ProjectColumns(project_id=1, column_name="Done", order=4),
+    ]
+    db.add_all(project_columns)
+    await db.flush()
+    await db.commit()
 
-    # Add tasks
+    # Add tasks (using column_name as defined in the model)
     tasks = [
-        Task(project_id=1, column_name=ColumnNames.TODO, title="Task 1.1", description="Description 1.1", priority=Priority.LOW, due_date=datetime.now(timezone.utc), created_by=1, updated_by=1),
-        Task(project_id=1, column_name=ColumnNames.TODO, title="Task 1.2", description="Description 1.2", priority=Priority.MEDIUM, due_date=datetime.now(timezone.utc), created_by=1, updated_by=1),
+        Task(project_id=1, column_name=1, title="Task 1.1", description="Description 1.1", priority=Priority.LOW, due_date=datetime.now(timezone.utc), created_by=1, updated_by=1),
+        Task(project_id=1, column_name=1, title="Task 1.2", description="Description 1.2", priority=Priority.MEDIUM, due_date=datetime.now(timezone.utc), created_by=1, updated_by=1),
     ]
     db.add_all(tasks)
     await db.flush()
@@ -96,6 +108,17 @@ async def seed_db(db: AsyncSession):
     if users[1].role == UserRole.MODERATOR:
         projects.append(Projects(owner_id=2, project_name="Project 2"))
         db.add(projects[1])
+        await db.flush()
+        await db.commit()
+        
+        # Add columns for Project 2
+        project_2_columns = [
+            ProjectColumns(project_id=2, column_name="To Do", order=1),
+            ProjectColumns(project_id=2, column_name="In Progress", order=2),
+            ProjectColumns(project_id=2, column_name="Review", order=3),
+            ProjectColumns(project_id=2, column_name="Done", order=4),
+        ]
+        db.add_all(project_2_columns)
         await db.flush()
         await db.commit()
 

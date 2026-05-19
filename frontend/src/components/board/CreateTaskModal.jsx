@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { X, CheckSquare, AlertCircle } from 'lucide-react';
 import apiClient from '../../api/client';
 
-export default function CreateTaskModal({ projectId, defaultColumn, onClose }) {
+export default function CreateTaskModal({ projectId, columns, defaultColumnId, onClose }) {
+  // We initialize the form with the defaultColumnId passed from the board, 
+  // or fallback to the very first column in the array if none is provided.
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    priority: 'medium', // Default priority
+    priority: 'medium',
     due_date: '',
-    column_name: defaultColumn || 'todo'
+    column_id: defaultColumnId || (columns.length > 0 ? columns[0].id : '')
   });
   
   const [loading, setLoading] = useState(false);
@@ -26,23 +28,23 @@ export default function CreateTaskModal({ projectId, defaultColumn, onClose }) {
     setError('');
 
     try {
-      // Format the due_date to an ISO string if one was provided
-      let formattedDate = new Date().toISOString(); // Fallback to today
+      let formattedDate = new Date().toISOString(); 
       if (formData.due_date) {
         formattedDate = new Date(formData.due_date).toISOString();
       }
 
+      // We send column_id as an integer to perfectly match the backend Pydantic schema
       await apiClient.post('/tasks/', {
         project_id: parseInt(projectId),
-        column_name: formData.column_name,
+        column_id: parseInt(formData.column_id),
         title: formData.title.trim(),
         description: formData.description.trim(),
         priority: formData.priority,
         due_date: formattedDate
       });
 
-      // We do not need to refresh the board manually! 
-      // The FastAPI WebSocket will broadcast the new task to us instantly.
+      // The FastAPI WebSocket broadcasts the task_created event, 
+      // so we just close the modal. The board will update automatically!
       onClose();
     } catch (err) {
       console.error(err);
@@ -104,15 +106,17 @@ export default function CreateTaskModal({ projectId, defaultColumn, onClose }) {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Column</label>
               <select
-                name="column_name"
-                value={formData.column_name}
+                name="column_id"
+                value={formData.column_id}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white"
               >
-                <option value="todo">To Do</option>
-                <option value="in_progress">In Progress</option>
-                <option value="review">Review</option>
-                <option value="done">Done</option>
+                {/* DYNAMIC COLUMNS LOOP */}
+                {columns.map(col => (
+                  <option key={col.id} value={col.id}>
+                    {col.column_name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -136,6 +140,7 @@ export default function CreateTaskModal({ projectId, defaultColumn, onClose }) {
             <input
               type="date"
               name="due_date"
+              required
               value={formData.due_date}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none"

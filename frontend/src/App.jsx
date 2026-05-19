@@ -1,12 +1,14 @@
 import { useContext } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { WebSocketProvider } from './context/WebSocketContext';
 import Login from './components/auth/Login';
 import MainLayout from './components/layout/MainLayout';
 import ProjectBoard from './pages/ProjectBoard';
-// NEW IMPORT
 import ManageUsers from './pages/ManageUsers';
+import MyTasks from './pages/MyTasks';
+// NEW IMPORT
+import Notifications from './pages/Notifications';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -32,20 +34,22 @@ export default function App() {
   return (
     <AuthProvider>
       <WebSocketProvider>
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
             
             <Route path="/" element={<ProtectedRoute><MainLayout title="Dashboard"><Dashboard /></MainLayout></ProtectedRoute>} />
             <Route path="/projects/:id" element={<ProtectedRoute><MainLayout title="Project Board"><ProjectBoard /></MainLayout></ProtectedRoute>} />
+            <Route path="/manage-users" element={<ProtectedRoute><MainLayout title="Manage Users"><ManageUsers /></MainLayout></ProtectedRoute>} />
+            <Route path="/my-tasks" element={<ProtectedRoute><MainLayout title="My Tasks"><MyTasks /></MainLayout></ProtectedRoute>} />
             
-            {/* NEW MANAGE USERS ROUTE */}
+            {/* NEW NOTIFICATIONS ROUTE */}
             <Route 
-              path="/manage-users" 
+              path="/notifications" 
               element={
                 <ProtectedRoute>
-                  <MainLayout title="Manage Users">
-                    <ManageUsers />
+                  <MainLayout title="Notifications">
+                    <Notifications />
                   </MainLayout>
                 </ProtectedRoute>
               } 
@@ -53,7 +57,7 @@ export default function App() {
             
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </WebSocketProvider>
     </AuthProvider>
   );

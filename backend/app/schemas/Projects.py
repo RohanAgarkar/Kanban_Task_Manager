@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional
+from app.modals.Modals import ProjectColumns
 
 
 class ProjectResponse(BaseModel):
@@ -54,3 +55,39 @@ class RenameProjectRequest(BaseModel):
     """Request model for renaming a project"""
     project_id: int
     project_name: str
+
+
+class ColumnResponse(BaseModel):
+    """Response model for a project column"""
+    id: int
+    project_id: int
+    column_name: str
+    order: int
+    
+    class Config:
+        from_attributes = True
+
+
+class GetColumnsResponse(BaseModel):
+    """Response model for get project columns endpoint"""
+    columns: List[ColumnResponse]
+    
+    class Config:
+        from_attributes = True
+
+
+class CreateColumnRequest(BaseModel):
+    """Request model for creating a new column"""
+    column_name: str
+    order: int
+
+
+class DeleteColumnRequest(BaseModel):
+    """Request model for deleting a column"""
+    move_tasks_to_column_id: Optional[int] = None
+    delete_tasks: bool = False
+
+
+class RenameColumnRequest(BaseModel):
+    """Request model for renaming a column"""
+    column_name: str

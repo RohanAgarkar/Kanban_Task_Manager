@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from app.routes.websockets import ws_router
 from app.routes.projects import projects_router
 from app.routes.tasks import tasks_router
+from app.routes.notifications import notifications_router
 
 from .config.config import Config
 from .config.db import create_tables
@@ -49,6 +50,7 @@ app.include_router(auth_router)
 app.include_router(ws_router)
 app.include_router(projects_router)
 app.include_router(tasks_router)
+app.include_router(notifications_router)
 
 @app.get("/")
 async def read_root():

@@ -1,9 +1,20 @@
 import { Draggable } from '@hello-pangea/dnd';
-import { MessageSquare, Calendar } from 'lucide-react';
+import { Calendar, MessageSquare, Paperclip } from 'lucide-react';
 import { format } from 'date-fns';
 
-// Added onClick to props
 export default function TaskCard({ task, index, onClick }) {
+  // BULLETPROOF FALLBACK: If the data is still loading or malformed, 
+  // do not render the card and protect the drag-and-drop context from crashing.
+  if (!task || !task.task || !task.task.id) return null;
+
+  // Safely unwrap our nested data structure
+  const t = task.task;
+  const assignees = task.assignees || [];
+
+  // Guarantee the ID is a string for the drag-and-drop library
+  const draggableId = t.id.toString();
+
+  // Helper to color-code priorities
   const getPriorityColor = (priority) => {
     switch (priority?.toLowerCase()) {
       case 'high': return 'bg-red-100 text-red-700';
@@ -14,55 +25,71 @@ export default function TaskCard({ task, index, onClick }) {
   };
 
   return (
-    <Draggable draggableId={task.id.toString()} index={index}>
+    <Draggable draggableId={draggableId} index={index}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          // Attach the onClick handler here
           onClick={onClick}
-          className={`bg-white p-4 rounded-lg shadow-sm border ${
-            snapshot.isDragging ? 'border-primary shadow-md rotate-2' : 'border-gray-200'
-          } mb-3 cursor-grab active:cursor-grabbing hover:border-gray-300 transition-colors`}
+          className={`bg-white p-4 rounded-xl border mb-3 cursor-pointer group hover:border-primary transition-all ${
+            snapshot.isDragging 
+              ? 'shadow-xl border-primary rotate-2 scale-105 z-50' 
+              : 'border-gray-200 shadow-sm'
+          }`}
         >
+          {/* Card Header (Priority Badge) */}
           <div className="flex justify-between items-start mb-2 gap-2">
-            <h4 className="font-medium text-sm text-gray-900 leading-snug">
-              {task.title}
-            </h4>
-            <span className={`text-[10px] font-semibold px-2 py-1 rounded-full shrink-0 ${getPriorityColor(task.priority)}`}>
-              {task.priority || 'Normal'}
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${getPriorityColor(t.priority)}`}>
+              {t.priority}
             </span>
           </div>
 
-          {task.due_date && (
-            <div className="flex items-center gap-1 text-xs text-gray-500 mb-4 mt-2">
-              <Calendar className="w-3 h-3" />
-              <span>{format(new Date(task.due_date), 'MMM d, yyyy')}</span>
-            </div>
-          )}
+          {/* Task Title */}
+          <h4 className="text-sm font-semibold text-gray-900 mb-2 leading-tight group-hover:text-primary transition-colors">
+            {t.title}
+          </h4>
 
-          <div className="flex items-center justify-between mt-4">
+          {/* Card Footer (Assignees & Icons) */}
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+            
+            {/* Assignees Overlapping Avatars */}
             <div className="flex -space-x-2">
-              {task.assignees && task.assignees.length > 0 ? (
-                task.assignees.map((assignee, i) => (
+              {assignees.length > 0 ? (
+                assignees.slice(0, 3).map((a, i) => (
                   <div 
                     key={i} 
-                    className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-600"
-                    title={assignee.full_name}
+                    className="w-6 h-6 rounded-full bg-slate-700 border-2 border-white flex items-center justify-center text-[9px] font-bold text-white shadow-sm" 
+                    title={a.full_name}
                   >
-                    {assignee.initials}
+                    {a.initials}
                   </div>
                 ))
               ) : (
-                <div className="w-6 h-6 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center"></div>
+                <div className="w-6 h-6 rounded-full bg-gray-50 border-2 border-white flex items-center justify-center text-gray-400 shadow-sm" title="Unassigned">
+                  <span className="text-[14px] mb-1">-</span>
+                </div>
+              )}
+              {assignees.length > 3 && (
+                <div className="w-6 h-6 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[9px] font-bold text-gray-600 shadow-sm">
+                  +{assignees.length - 3}
+                </div>
               )}
             </div>
 
-            <div className="flex items-center gap-1 text-gray-400 text-xs font-medium">
-              <MessageSquare className="w-3 h-3" />
-              <span>0</span>
+            {/* Meta Icons */}
+            <div className="flex gap-2.5 text-gray-400">
+              {t.due_date && (
+                <div className="flex items-center gap-1" title={`Due: ${format(new Date(t.due_date), 'MMM d')}`}>
+                  <Calendar className="w-3.5 h-3.5" />
+                </div>
+              )}
+              {/* Optional UI placeholders for features added in Phase 9 */}
+              <div className="flex items-center gap-1" title="Comments">
+                <MessageSquare className="w-3.5 h-3.5" />
+              </div>
             </div>
+            
           </div>
         </div>
       )}
