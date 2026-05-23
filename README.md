@@ -103,7 +103,7 @@ Todo-project/
 ├── backend/                    # FastAPI backend
 │   ├── app/
 │   │   ├── config/            # Configuration files
-│   │   ├── modals/            # Database models
+│   │   ├── models/            # Database models
 │   │   ├── routes/            # API routes
 │   │   ├── schemas/           # Pydantic schemas
 │   │   ├── utils/             # Utility functions

@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 
 
 from app.config.db import get_db
-from app.modals.Modals import User, Projects, ProjectMembers, ProjectColumns, UserRole
+from app.models.Models import User, Projects, ProjectMembers, ProjectColumns, UserRole
 from app.routes.auth import get_current_user
 from app.schemas.Projects import (
     GetAllProjectsResponse, 
@@ -567,7 +567,7 @@ async def delete_project_column(
         )
     
     # Handle tasks in the column
-    from app.modals.Modals import Task
+    from app.models.Models import Task
     
     tasks_result = await db.execute(
         select(Task).where(Task.column_name == column_id)

@@ -13,7 +13,7 @@ from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from ..modals.Modals import User, UserRole
+from ..models.Models import User, UserRole
 from ..config.security_conf import JWTConfig
 
 

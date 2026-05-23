@@ -15,7 +15,7 @@ from typing import List
 
 # Import our database, models, schemas, and utilities
 from ..config.db import get_db
-from ..modals.Modals import User, UserRole
+from ..models.Models import User, UserRole
 from ..schemas.Auth import Token, UserResponse, AddUserRequest
 from ..utils.auth_utils import (
     authenticate_user, 

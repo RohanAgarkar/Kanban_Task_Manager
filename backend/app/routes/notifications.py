@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from app.config.db import get_db
-from app.modals.Modals import User, Notifications
+from app.models.Models import User, Notifications
 from app.routes.auth import get_current_user
 from app.schemas.Notifications import GetNotificationsResponse, NotificationResponse
 

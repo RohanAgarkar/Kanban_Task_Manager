@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import List
 
 from app.config.db import get_db
-from app.modals.Modals import User, Task, TaskAssignees, Comments, Projects, ProjectMembers, ProjectColumns, TaskAttachments, UserRole, Notifications
+from app.models.Models import User, Task, TaskAssignees, Comments, Projects, ProjectMembers, ProjectColumns, TaskAttachments, UserRole, Notifications
 from app.routes.auth import get_current_user
 from app.schemas.Tasks import (
     TaskResponse,

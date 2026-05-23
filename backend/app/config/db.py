@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import sessionmaker
 
-from app.modals import Base
+from app.models import Base
 
 engine = create_async_engine('sqlite+aiosqlite:///./data/kanban.db', echo=True)
 AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

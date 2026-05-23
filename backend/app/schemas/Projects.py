@@ -1,7 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional
-from app.modals.Modals import ProjectColumns
+from app.models.Models import ProjectColumns
 
 
 class ProjectResponse(BaseModel):

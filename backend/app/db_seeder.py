@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 import hashlib
 import secrets
 from sqlalchemy.ext.asyncio import AsyncSession
-from .modals.Modals import Base, User, UserRole, Task, ColumnNames, Priority, Projects, TaskAssignees, Comments, ProjectMembers, ProjectColumns
+from .models.Models import Base, User, UserRole, Task, ColumnNames, Priority, Projects, TaskAssignees, Comments, ProjectMembers, ProjectColumns
 from .config.db import AsyncSessionLocal
 
 

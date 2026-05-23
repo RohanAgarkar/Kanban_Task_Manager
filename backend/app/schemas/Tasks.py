@@ -1,7 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional
-from app.modals.Modals import ColumnNames, Priority, ProjectColumns, TaskAttachments
+from app.models.Models import ColumnNames, Priority, ProjectColumns, TaskAttachments
 
 
 class TaskResponse(BaseModel):

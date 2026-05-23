@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-from ..modals.Modals import UserRole
+from ..models.Models import UserRole
 
 class Token(BaseModel):
     """Model for the token response"""
